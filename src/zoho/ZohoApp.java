@@ -5,6 +5,7 @@
  */
 package zoho;
 
+import java.io.Console;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -71,8 +72,9 @@ public class ZohoApp {
                 System.out.print("2. If not\n\t==> ");
                 int option = getChoice();
                 if(option==1) {
-                    System.out.println("Enter password");
-                    String pw = input.nextLine();
+                    Console console = System.console();
+                    char []pas = console.readPassword("Enter password:: ");
+                    String pw = new String(pas);
                     if(this.getHash(pw) == null ? this.rajeshPass == null : this.getHash(pw).equals(this.rajeshPass)) {
                         System.out.println("Welcome Rajesh");
                         this.currentConfig.auth_token = "23a08e39dfb160df790ab8068ec59665";
