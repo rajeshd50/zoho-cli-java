@@ -225,4 +225,115 @@ public class ZohoService {
         }
         return res;
     }
+    
+    /**
+     * Update a new log
+     * @param token User token
+     * @param url url of the log
+     * @param note Notes
+     * @param date Date
+     * @param bill Bill status
+     * @param hour Total hour
+     * @return response code or -1 if error
+     */
+    public int updateLog(String token, String url, String note, String date,
+            String bill, String hour) {
+        return this.addLog(token, url, note, date, bill, hour);
+    }
+    
+    public int deleteLog(String token, String url) {
+        int res = -1;
+        try {
+            URL obj = new URL(url+"?authtoken="+token);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("User-Agent", "Mozilla/40.0");
+            int responseCode = con.getResponseCode();
+            System.out.println("Response code "+responseCode);
+            BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            res = responseCode;
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return res;
+    }
+    
+    /**
+     * Add a new task to a project
+     * @param token User token
+     * @param portal Portal id
+     * @param project project id
+     * @param taskName Task name
+     * @param taskStartDate Start date
+     * @param taskEndDate End date
+     * @param taskPriority Priority
+     * @param taskDesc Description
+     * @return response code or -1 if fail
+     */
+    public int addTask(String token, String portal, String project,
+            String taskName, String taskStartDate,
+            String taskEndDate, String taskPriority, String taskDesc) {
+        int res = -1;
+        try {
+            String urlParam = "name="+taskName;
+            if(!taskStartDate.isEmpty()) {
+                urlParam += "&start_date="+taskStartDate;
+            }
+            if(!taskEndDate.isEmpty()) {
+                urlParam += "&end_date="+taskEndDate;
+            }
+            if(!taskPriority.isEmpty()) {
+                urlParam += "&priority="+taskPriority;
+            }
+            if(!taskDesc.isEmpty()) {
+                urlParam += "&description="+taskDesc;
+            }
+            urlParam += "&authtoken="+token;
+            String url = this.baseUrl + "/portal/"+portal+"/projects/"+project;
+            url += "/tasks/";
+            byte[] postData = urlParam.getBytes( StandardCharsets.UTF_8 );
+            int postDataLength = postData.length;
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setDoOutput( true );
+            con.setInstanceFollowRedirects( false );
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Mozilla/40.0");
+            con.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded"); 
+            con.setRequestProperty( "charset", "utf-8");
+            con.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+            con.setUseCaches( false );
+            
+            try( DataOutputStream wr = new DataOutputStream( con.getOutputStream())) {
+                wr.write( postData );
+             }
+            int responseCode = con.getResponseCode();
+            System.out.println("Response code "+responseCode);
+            BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            res = responseCode;
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return res;
+    }
 }

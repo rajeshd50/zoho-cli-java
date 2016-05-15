@@ -61,6 +61,10 @@ public class ZohoApp {
     }
     
     private int askQuestions() throws NoSuchAlgorithmException {
+        System.out.println("#--------------------------------#");
+        System.out.println("#-----------ZOHO MENU------------#");
+        System.out.println("#---To leave ctrl+c or ctrl+z----#");
+        System.out.println("#--------------------------------#\n");
         switch(this.currentState) {
             case 0:
                 System.out.println("1. If you are rajesh");
@@ -176,7 +180,51 @@ public class ZohoApp {
                     return 4; //Select task
                 }
             case 5: // Create task
-                break;
+                System.out.println("Current project "+this.currentConfig.currentProject.name);
+                System.out.println("Answer the following question for a new task :D");
+                System.out.print("\nEnter task name (mandatory):: ");
+                String taskName = this.input.nextLine();
+                System.out.print("Enter start date (MM-DD-YYYY) (Leave empty if not required):: ");
+                String taskStartDate = this.input.nextLine();
+                System.out.print("Enter end date (MM-DD-YYYY) (Leave empty if not required):: ");
+                String taskEndDate = this.input.nextLine();
+                System.out.println("For priority h->High, m->medium, l->low");
+                System.out.print("Priority (Leave empty if not required):: ");
+                String taskPriority = this.input.nextLine();
+                System.out.print("Enter Description (Leave empty if not required):: ");
+                String taskDesc = this.input.nextLine();
+                
+                if(taskName.isEmpty()) {
+                    System.out.println("Task name is required");
+                    return 4;
+                }
+                System.out.println("Add the task?? Enter to add, write anything to cancel :-P");
+                System.out.print("\t==> ");
+                String ures = this.input.nextLine();
+                if(ures!=null && ures.isEmpty()) {
+                    if(taskPriority.isEmpty()) {
+                        taskPriority = "None";
+                    } else if(taskPriority.equalsIgnoreCase("h")) {
+                        taskPriority = "High";
+                    } else if(taskPriority.equalsIgnoreCase("m")) {
+                        taskPriority = "Medium";
+                    } else if(taskPriority.equalsIgnoreCase("l")) {
+                        taskPriority = "Low";
+                    } else {
+                        taskPriority = "None";
+                    }
+                    int rc = new ZohoService().addTask(this.currentConfig.auth_token, 
+                            this.currentConfig.portal_id, this.currentConfig.currentProject.id, 
+                            taskName, taskStartDate, taskEndDate, taskPriority, taskDesc);
+                    if(rc==201) {
+                        System.out.println("Task created successfully!! :D");
+                    }else {
+                        System.out.println("Error while creating task!! :'(");
+                    }
+                    return 4;
+                } else {
+                    return 4;
+                }
             case 6: //List log
                 this.currentConfig.logs = new ZohoService().getLogs(this.currentConfig.auth_token, 
                         this.currentConfig.currentTask.timesheetLink);
@@ -213,7 +261,7 @@ public class ZohoApp {
                         return 6; // Log list
                     }
                     this.currentConfig.currentLog = lt;
-                    return 8; //Edit log
+                    return 8; //Edit/delete log
                 } else {
                     System.out.println("Wrong choice, Try again");
                     return 6; // Log list
@@ -250,15 +298,97 @@ public class ZohoApp {
                 if(resp!=null && resp.isEmpty()) {
                     int rcode = new ZohoService().addLog(this.currentConfig.auth_token,
                             this.currentConfig.currentTask.timesheetLink, notes, date, billable, hour);
-                    System.out.println(rcode);
                     if(rcode==201) {
                         System.out.println("Log created successfully!! :D");
+                    }else {
+                        System.out.println("Error while creating log!! :'(");
                     }
                     return 6; // Get back to log list
                 }else {
                     return 6; // Get back to log list
                 }
+            case 8: // Edit or delete log selector
+                System.out.println("1 --> Edit");
+                System.out.println("2 --> Delete");
+                System.out.println("3 --> Go back");
+                System.out.print("\t==> ");
+                ch = getChoice();
+                if(ch==1) {
+                    return 9; //Edit log
+                }
+                if(ch==2) {
+                    return 10; //Delete Log
+                }
+                return 6; //List log
+            case 9:
+                System.out.println("Current task "+this.currentConfig.currentTask.name
+                        +", Current project "+this.currentConfig.currentProject.name+"\n");
+                System.out.println("Give the updated details...\n");
+                System.out.println("Leave empty if dont want to change");
+                System.out.print("Enter date(MM-DD-YYYY): (press enter for today) :: ");
+                date = this.input.nextLine();
+                System.out.print("Enter hour (HH:MM) :: ");
+                hour = this.input.nextLine();
+                System.out.print("Billable?? (y/n) :: ");
+                billable = this.input.nextLine();
+                System.out.print("Enter notes? if any...\n");
+                notes = this.input.nextLine();
+                if(date.isEmpty()) {
+                    date = this.currentConfig.currentLog.log_date;
+                }
+                if(billable.equalsIgnoreCase("y")) {
+                    billable = "Billable";
+                } else if(billable.equalsIgnoreCase("n")) {
+                    billable = "Non Billable";
+                } else {
+                    billable = this.currentConfig.currentLog.bill_status;
+                }
+                if(notes.isEmpty()) {
+                    notes = this.currentConfig.currentLog.notes;
+                }
+                if(hour.isEmpty()) {
+                    hour = this.currentConfig.currentLog.hourDisplay;
+                }
+                System.out.println("----------");
+                System.out.println("Your updated log details");
+                System.out.println(notes+" || "+date+" || "+hour+" || "+billable);
+                System.out.println("----------");
                 
+                System.out.print("Save this updated log? (press enter for add or any other for cancel) :: ");
+                System.out.print("\t==> ");
+                resp = this.input.nextLine();
+
+                if(resp!=null && resp.isEmpty()) {
+                    int rcode = new ZohoService().updateLog(this.currentConfig.auth_token,
+                            this.currentConfig.currentLog.selfUrl, notes, date, billable, hour);
+                    System.out.println(rcode);
+                    if(rcode==200) {
+                        System.out.println("Log updated successfully!! :D");
+                    }
+                    return 6; // Get back to log list
+                }else {
+                    return 6; // Get back to log list
+                }
+            case 10:
+                System.out.println("Current task "+this.currentConfig.currentTask.name
+                        +", Current project "+this.currentConfig.currentProject.name+"\n");
+                System.out.println("---------------");
+                System.out.println("1. Delete? sure!!");
+                System.out.println("2. Go back");
+                System.out.print("\t==> ");
+                ch = this.getChoice();
+                if(ch==1) {
+                    int rcode = new ZohoService().deleteLog(this.currentConfig.auth_token,
+                            this.currentConfig.currentLog.selfUrl);
+                    if(rcode==200) {
+                        System.out.println("Log deleted");
+                    } else {
+                        System.out.println("Error while deleting");
+                    }
+                    return 6;
+                } else {
+                    return 6;
+                }
         }       
         
         return -1;
