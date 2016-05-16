@@ -228,6 +228,7 @@ public class ZohoApp {
                     return 4;
                 }
             case 6: //List log
+//                System.out.println("Getting logs");
                 this.currentConfig.logs = new ZohoService().getLogs(this.currentConfig.auth_token, 
                         this.currentConfig.currentTask.timesheetLink);
                 System.out.println("----------------------");

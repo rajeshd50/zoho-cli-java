@@ -57,6 +57,10 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (org.json.JSONException jse) {
+            System.out.println("Error in response, please try again.. :(");
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return portals;
     }
@@ -92,6 +96,10 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (org.json.JSONException jse) {
+            System.out.println("Error in response, please try again.. :(");
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return projects;
     }
@@ -130,6 +138,10 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (org.json.JSONException jse) {
+            System.out.println("Error in response, please try again.. :(");
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return tasks;
     }
@@ -152,6 +164,7 @@ public class ZohoService {
                 response.append(inputLine);
             }
             in.close();
+//            System.out.println(response.toString());
             JSONObject res = new JSONObject(response.toString());
             JSONArray arr = res.getJSONObject("timelogs").getJSONArray("tasklogs");
             for(int i=0;i<arr.length();i++) {
@@ -170,6 +183,10 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (org.json.JSONException jse) {
+            System.out.println("Error in response, please try again.. :(");
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return logs;
     }
@@ -222,6 +239,8 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return res;
     }
@@ -264,6 +283,8 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return res;
     }
@@ -333,6 +354,8 @@ public class ZohoService {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ZohoService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.out.println("Some error occured... Please come back later.. :(");
         }
         return res;
     }
